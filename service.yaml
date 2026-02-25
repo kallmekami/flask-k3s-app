@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+  namespace: flask-prod
+spec:
+  selector:
+    app: flask
+  ports:
+    - protocol: TCP
+      port: 80         # این پورت در سطح سرویس هست
+      targetPort: 5000  # این پورت داخل کانتینر هست
+  type: NodePort  # اگر بخوای از بیرون هم دسترسی داشته باشی
