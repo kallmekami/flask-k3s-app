@@ -1,4 +1,4 @@
-name: Deploy to K3s
+name: Deploy to Local K3s
 
 on:
   push:
@@ -7,28 +7,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # نصب kubectl (نسخه stable خودکار)
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'latest'
+      - name: Test cluster
+        run: kubectl get nodes
 
-      # ساخت kubeconfig از Secret
-      - name: Set up Kubeconfig
-        run: |
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
-          kubectl version --client
-          kubectl get nodes
-
-      # دیپلوی
-      - name: Deploy to cluster
-        run: |
-          export KUBECONFIG=$PWD/kubeconfig
-          kubectl apply -f k8s/
+      - name: Deploy
+        run: kubectl apply -f k8s/
